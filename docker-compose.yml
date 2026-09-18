@@ -1,0 +1,21 @@
+services:
+  suricata:
+    build: .
+    image: suricata-tzsp:latest
+    container_name: suricata-ids
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      - suricata-net
+    ports:
+      # Published so a RouterOS mangle sniff-tzsp rule can reach this
+      # container through the Docker host's routable IP, without needing
+      # a dedicated route into the container's overlay network.
+      - "37008:37008/udp"
+    restart: unless-stopped
+
+networks:
+  suricata-net:
+    driver: bridge
+    name: suricata-net
